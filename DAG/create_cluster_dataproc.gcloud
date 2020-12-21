@@ -1,0 +1,42 @@
+default_parallelism=512
+
+PROPERTIES="\
+spark:spark.executor.cores=2,\
+spark:spark.executor.memory=4g,\
+spark:spark.executor.memoryOverhead=2g,\
+spark:spark.driver.memory=10g,\
+spark:spark.driver.maxResultSize=10g,\
+spark:spark.kryoserializer.buffer=128m,\
+spark:spark.kryoserializer.buffer.max=1024m,\
+spark:spark.serializer=org.apache.spark.serializer.KryoSerializer,\
+spark:spark.default.parallelism=${default_parallelism},\
+spark:spark.rdd.compress=true,\
+spark:spark.network.timeout=3600s,\
+spark:spark.rpc.message.maxSize=256,\
+spark:spark.io.compression.codec=snappy,\
+spark:spark.shuffle.service.enabled=true,\
+spark:spark.sql.shuffle.partitions=256,\
+spark:spark.sql.files.ignoreCorruptFiles=true,\
+yarn:yarn.nodemanager.resource.cpu-vcores=2,\
+yarn:yarn.scheduler.minimum-allocation-vcores=2,\
+yarn:yarn.scheduler.maximum-allocation-vcores=4,\
+yarn:yarn.nodemanager.vmem-check-enabled=false,\
+capacity-scheduler:yarn.scheduler.capacity.resource-calculator=org.apache.hadoop.yarn.util.resource.DominantResourceCalculator
+  "
+
+gcloud beta dataproc clusters create cluster-test \
+       --scopes cloud-platform \
+       --bucket  notebook-spark-falabella \
+       --region us-central1 \
+       --zone  us-central1-b  \
+       --master-boot-disk-size  200GB \
+       --master-machine-type n1-highmem-2 \
+       --num-workers  2 \
+       --worker-machine-type n1-standard-1 \
+       --optional-components=ANACONDA,JUPYTER \
+       --enable-component-gateway \
+       #--metadata google-cloud-kms
+
+
+
+python job_dataflow --param1 --param2
